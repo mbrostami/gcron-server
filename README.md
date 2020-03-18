@@ -1,6 +1,8 @@
 # gcron server [In Development]
 A go written tool to manage distributed cron jobs with centralized GUI. This will help you monitor gcrons if you have multiple servers.
 
+[gcron client](https://github.com/mbrostami/gcron)
+
 ## Features
 - Supporting GCron 
 - Centralized logging
