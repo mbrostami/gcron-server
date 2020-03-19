@@ -11,7 +11,7 @@ func main() {
 	protocolType := flag.String("prot", "tcp", "Protocol (tcp/udp/unix)")
 	flag.Parse()
 	if *protocolType == "unix" {
-		path := "/tmp/gcron.sock"
+		path := "/tmp/gcron-server.sock"
 		server.ListenUNIX(path)
 	} else if *protocolType == "tcp" {
 		server.ListenTCP(*host, *port)

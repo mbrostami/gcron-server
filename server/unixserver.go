@@ -13,12 +13,12 @@ import (
 func ListenUNIX(path string) {
 	// Listen for incoming connections.
 	l, err := net.Listen("unix", path)
+	defer l.Close()
 	if err != nil {
 		fmt.Println("Error listening:", err.Error())
 		os.Exit(1)
 	}
 	// Close the listener when the application closes.
-	defer l.Close()
 	fmt.Println("Listening on unix socket: " + path)
 	for {
 		// Listen for an incoming connection.
