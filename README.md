@@ -22,7 +22,15 @@ TCP Server `go run main.go`
 TCP Server `go run main.go --host=0.0.0.0`  
 TCP Server `go run main.go --host=0.0.0.0 --port=1400`  
 UDP Server `go run main.go --prot=tcp`  
-UNIX Server `go run main.go --prot=unix`  
+UNIX Server `go run main.go --prot=unix`   
+```
+  -host string
+        Host (default "127.0.0.1")
+  -port string
+        Port number (default "1400")
+  -prot string
+        Protocol (tcp/udp/unix) (default "tcp")
+```
 
 ## TODO
 - All Features! :D
