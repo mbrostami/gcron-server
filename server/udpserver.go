@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
-	"gcron-server/cron"
 	"net"
 	"os"
+
+	"github.com/mbrostami/gcron/cron"
 )
 
 // ListenUDP Start listening on udp port

@@ -2,7 +2,8 @@ package main
 
 import (
 	"flag"
-	"gcron-server/server"
+
+	"github.com/mbrostami/gcron-server/server"
 )
 
 func main() {
