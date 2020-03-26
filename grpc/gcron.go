@@ -16,12 +16,12 @@
  *
  */
 
-//go:generate protoc -I ../routeguide --go_out=plugins=grpc:../routeguide ../routeguide/route_guide.proto
+//go:generate protoc -I ../grpc --go_out=plugins=grpc:../grpc ../groc/grpc.proto
 
 // Package main implements a simple gRPC server that demonstrates how to use gRPC-Go libraries
 // to perform unary, client streaming, server streaming and full duplex RPCs.
 //
-// It implements the route guide service whose definition can be found in routeguide/route_guide.proto.
+// It implements the gcron service whose definition can be found in gcron/grpc/gcron.proto.
 package grpc
 
 import (
@@ -35,11 +35,13 @@ import (
 
 	"github.com/golang/protobuf/ptypes/wrappers"
 	pb "github.com/mbrostami/gcron/grpc"
+	"github.com/mbrostami/gcron/helpers"
 )
 
 type gcronServer struct {
 	pb.UnimplementedGcronServer
-	mu sync.Mutex // protects routeNotes
+	mux *helpers.Mutex
+	mu  sync.Mutex // protects routeNotes
 }
 
 // InitializeTask returns the feature at the given point.
@@ -49,14 +51,37 @@ func (s *gcronServer) InitializeTask(ctx context.Context, guid *wrappers.StringV
 	return boolValue, nil
 }
 
-// InitializeTask returns the feature at the given point.
+// Lock mutex lock by name
+func (s *gcronServer) Lock(ctx context.Context, lockName *wrappers.StringValue) (*wrappers.BoolValue, error) {
+	log.Printf("Locking ... %+v", lockName.GetValue())
+	mux, _ := helpers.NewMutex(lockName.GetValue())
+	s.mux = mux
+	locked, err := s.mux.Lock()
+	if locked {
+		log.Printf("Locked! %v", lockName.GetValue())
+	} else {
+		log.Printf("Already locked! %v", lockName.GetValue())
+	}
+	boolValue := &wrappers.BoolValue{Value: locked}
+	return boolValue, err
+}
+
+// Release release the lock
+func (s *gcronServer) Release(ctx context.Context, lockName *wrappers.StringValue) (*wrappers.BoolValue, error) {
+	log.Printf("Releasing ... %+v", lockName.GetValue())
+	released, err := s.mux.Release()
+	boolValue := &wrappers.BoolValue{Value: released}
+	return boolValue, err
+}
+
+// Log returns the feature at the given point.
 func (s *gcronServer) Log(ctx context.Context, output *wrappers.StringValue) (*wrappers.BoolValue, error) {
 	log.Printf("Calling method Log ... %v", output)
 	boolValue := &wrappers.BoolValue{Value: true}
 	return boolValue, nil
 }
 
-// InitializeTask returns the feature at the given point.
+// FinializeTask returns the feature at the given point.
 func (s *gcronServer) FinializeTask(ctx context.Context, task *pb.Task) (*wrappers.BoolValue, error) {
 	log.Printf("Calling method Log ... %+v", task)
 	boolValue := &wrappers.BoolValue{Value: true}
