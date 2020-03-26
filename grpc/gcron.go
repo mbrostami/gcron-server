@@ -29,7 +29,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"sync"
 
 	"google.golang.org/grpc"
 
@@ -41,7 +40,6 @@ import (
 type gcronServer struct {
 	pb.UnimplementedGcronServer
 	mux *helpers.Mutex
-	mu  sync.Mutex // protects routeNotes
 }
 
 // InitializeTask returns the feature at the given point.
