@@ -26,7 +26,6 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net"
 
@@ -42,7 +41,7 @@ type gcronServer struct {
 	mux *helpers.Mutex
 }
 
-// InitializeTask returns the feature at the given point.
+// InitializeTask Keep guid
 func (s *gcronServer) InitializeTask(ctx context.Context, guid *wrappers.StringValue) (*wrappers.BoolValue, error) {
 	log.Printf("Calling method InitializeTask ... %+v", guid)
 	boolValue := &wrappers.BoolValue{Value: true}
@@ -81,7 +80,7 @@ func (s *gcronServer) Log(ctx context.Context, output *wrappers.StringValue) (*w
 
 // FinializeTask returns the feature at the given point.
 func (s *gcronServer) FinializeTask(ctx context.Context, task *pb.Task) (*wrappers.BoolValue, error) {
-	log.Printf("Calling method Log ... %+v", task)
+	log.Printf("Calling method FinializeTask ... %+v", task)
 	boolValue := &wrappers.BoolValue{Value: true}
 	return boolValue, nil
 }
@@ -92,9 +91,9 @@ func newServer() *gcronServer {
 }
 
 // Run grpc server
-func Run() {
+func Run(host string, port string) {
 	// flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", 1402))
+	lis, err := net.Listen("tcp", host+":"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
