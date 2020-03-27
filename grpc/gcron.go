@@ -18,7 +18,7 @@
 
 //go:generate protoc -I ../grpc --go_out=plugins=grpc:../grpc ../groc/grpc.proto
 
-// Package main implements a simple gRPC server that demonstrates how to use gRPC-Go libraries
+// Package grpc implements a simple gRPC server that demonstrates how to use gRPC-Go libraries
 // to perform unary, client streaming, server streaming and full duplex RPCs.
 //
 // It implements the gcron service whose definition can be found in gcron/grpc/gcron.proto.
@@ -39,13 +39,6 @@ import (
 type gcronServer struct {
 	pb.UnimplementedGcronServer
 	mux *helpers.Mutex
-}
-
-// InitializeTask Keep guid
-func (s *gcronServer) InitializeTask(ctx context.Context, guid *wrappers.StringValue) (*wrappers.BoolValue, error) {
-	log.Printf("Calling method InitializeTask ... %+v", guid)
-	boolValue := &wrappers.BoolValue{Value: true}
-	return boolValue, nil
 }
 
 // Lock mutex lock by name
@@ -72,15 +65,15 @@ func (s *gcronServer) Release(ctx context.Context, lockName *wrappers.StringValu
 }
 
 // Log returns the feature at the given point.
-func (s *gcronServer) Log(ctx context.Context, output *wrappers.StringValue) (*wrappers.BoolValue, error) {
-	log.Printf("Calling method Log ... %v", output)
+func (s *gcronServer) Log(ctx context.Context, logEntry *pb.LogEntry) (*wrappers.BoolValue, error) {
+	log.Printf("Calling method Log ... %v : %v", logEntry.GUID, logEntry.Output)
 	boolValue := &wrappers.BoolValue{Value: true}
 	return boolValue, nil
 }
 
 // FinializeTask returns the feature at the given point.
 func (s *gcronServer) FinializeTask(ctx context.Context, task *pb.Task) (*wrappers.BoolValue, error) {
-	log.Printf("Calling method FinializeTask ... %+v", task)
+	log.Printf("Calling method FinializeTask ... %+v", string(task.Output))
 	boolValue := &wrappers.BoolValue{Value: true}
 	return boolValue, nil
 }
@@ -113,5 +106,6 @@ func Run(host string, port string) {
 	// }
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterGcronServer(grpcServer, newServer())
+	log.Printf("Started listening on : %v", host+":"+port)
 	grpcServer.Serve(lis)
 }
