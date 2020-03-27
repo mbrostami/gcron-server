@@ -92,6 +92,8 @@ github.com/mbrostami/gcron v0.0.3-beta.3 h1:SBfK8cfi/gwG6ZDut0cf5eukRisCKRq+ovU5
 github.com/mbrostami/gcron v0.0.3-beta.3/go.mod h1:cbgPlWQFG3SVY9DkCb33cDw2t1N33hG7AFABofhBahk=
 github.com/mbrostami/gcron v0.0.3-beta.4 h1:+YEtRCxtKQpalpDfOghDL9dQTINL3L5d5Z3CXRMLAEo=
 github.com/mbrostami/gcron v0.0.3-beta.4/go.mod h1:KzPj3Xqm6L38yQlBg1wi8A+p/OxJwHlX4dr8NGMIU2M=
+github.com/mbrostami/gcron v0.0.3-beta.5 h1:FJBJCuYnmGCnriGUC8dgK26h1SH6IENQbjGBL4SY0Ko=
+github.com/mbrostami/gcron v0.0.3-beta.5/go.mod h1:KzPj3Xqm6L38yQlBg1wi8A+p/OxJwHlX4dr8NGMIU2M=
 github.com/mbrostami/go-filemutex v1.1.0 h1:Ne8sqAzpULytXSjjCRy1SdENs/DqTnDx23CMvokFp0c=
 github.com/mbrostami/go-filemutex v1.1.0/go.mod h1:qm7qbhGDy+dFC6Ud62305ZDt86jyI8K04PzTUf+Vydk=
 github.com/mitchellh/mapstructure v1.1.2 h1:fmNYVwqnSfB9mZU6OS2O6GsXM+wcskZDuKQzvN1EDeE=

@@ -2,30 +2,30 @@ package main
 
 import (
 	"flag"
+	"os"
 
+	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/mbrostami/gcron-server/configs"
 	"github.com/mbrostami/gcron-server/grpc"
-	"github.com/mbrostami/gcron-server/server"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
+
 	// Override config file values
-	flag.Bool("out.notime", false, "Clean output")
-	flag.Bool("out.clean", false, "Clean output")
+	flag.Bool("log.enable", false, "Enable file log")
+	flag.String("log.path", "/var/log/gcron/gcron-server.log", "Log file path")
+	flag.String("log.level", "warning", "Log level")
 	flag.String("server.host", "localhost", "Server host")
 	flag.String("server.port", "1400", "Server port")
-	flag.String("server.protocol", "grpc", "Protocol (tcp/udp/unix/grpc)")
-	flag.String("server.unix.socket", "/tmp/gcron-server.sock", "UNIX socket path")
-	cfg := configs.GetConfig(".", flag.CommandLine)
-	flag.Parse()
+	cfg := configs.GetConfig(flag.CommandLine)
 
-	if cfg.Server.Protocol == "unix" {
-		server.ListenUNIX(cfg.Server.Unix.Socket)
-	} else if cfg.Server.Protocol == "tcp" {
-		server.ListenTCP(cfg.Server.Host, cfg.Server.Port)
-	} else if cfg.Server.Protocol == "udp" {
-		server.ListenUDP(cfg.Server.Host, cfg.Server.Port)
-	} else if cfg.Server.Protocol == "grpc" {
-		grpc.Run(cfg.Server.Host, cfg.Server.Port)
-	}
+	log.SetLevel(cfg.GetLogLevel())
+	// Setup log
+	log.SetFormatter(&nested.Formatter{
+		NoColors: false,
+	})
+	log.SetOutput(os.Stdout)
+
+	grpc.Run(cfg.Server.Host, cfg.Server.Port)
 }

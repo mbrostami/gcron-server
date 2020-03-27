@@ -26,7 +26,7 @@ package grpc
 
 import (
 	"context"
-	"log"
+	"io"
 	"net"
 
 	"google.golang.org/grpc"
@@ -34,6 +34,7 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 	pb "github.com/mbrostami/gcron/grpc"
 	"github.com/mbrostami/gcron/helpers"
+	log "github.com/sirupsen/logrus"
 )
 
 type gcronServer struct {
@@ -43,14 +44,14 @@ type gcronServer struct {
 
 // Lock mutex lock by name
 func (s *gcronServer) Lock(ctx context.Context, lockName *wrappers.StringValue) (*wrappers.BoolValue, error) {
-	log.Printf("Locking ... %+v", lockName.GetValue())
+	log.Debugf("Locking ... %+v", lockName.GetValue())
 	mux, _ := helpers.NewMutex(lockName.GetValue())
 	s.mux = mux
 	locked, err := s.mux.Lock()
 	if locked {
-		log.Printf("Locked! %v", lockName.GetValue())
+		log.Debugf("Locked! %v", lockName.GetValue())
 	} else {
-		log.Printf("Already locked! %v", lockName.GetValue())
+		log.Debugf("Already locked! %v", lockName.GetValue())
 	}
 	boolValue := &wrappers.BoolValue{Value: locked}
 	return boolValue, err
@@ -58,37 +59,48 @@ func (s *gcronServer) Lock(ctx context.Context, lockName *wrappers.StringValue) 
 
 // Release release the lock
 func (s *gcronServer) Release(ctx context.Context, lockName *wrappers.StringValue) (*wrappers.BoolValue, error) {
-	log.Printf("Releasing ... %+v", lockName.GetValue())
+	log.Debugf("Releasing ... %+v", lockName.GetValue())
 	released, err := s.mux.Release()
 	boolValue := &wrappers.BoolValue{Value: released}
 	return boolValue, err
 }
 
 // Log returns the feature at the given point.
-func (s *gcronServer) Log(ctx context.Context, logEntry *pb.LogEntry) (*wrappers.BoolValue, error) {
-	log.Printf("Calling method Log ... %v : %v", logEntry.GUID, logEntry.Output)
-	boolValue := &wrappers.BoolValue{Value: true}
-	return boolValue, nil
+func (s *gcronServer) StartLog(stream pb.Gcron_StartLogServer) error {
+	log.Debugf("Calling method StartLog...")
+	var pointCount int32
+	var lastLog *pb.LogEntry
+	for {
+		logEntry, err := stream.Recv()
+		if err == io.EOF {
+			log.Tracef("Last log %v", lastLog)
+			return stream.SendAndClose(&wrappers.BoolValue{Value: true})
+		}
+		if err != nil {
+			return err
+		}
+		log.Tracef("Incoming stream %v", logEntry)
+		pointCount++
+		lastLog = logEntry
+	}
 }
 
-// FinializeTask returns the feature at the given point.
-func (s *gcronServer) FinializeTask(ctx context.Context, task *pb.Task) (*wrappers.BoolValue, error) {
-	log.Printf("Calling method FinializeTask ... %+v", string(task.Output))
+// Done Save the latest state of task.
+func (s *gcronServer) Done(ctx context.Context, task *pb.Task) (*wrappers.BoolValue, error) {
+	log.Debugf("Calling method Done ... %+v", task)
 	boolValue := &wrappers.BoolValue{Value: true}
 	return boolValue, nil
 }
 
 func newServer() *gcronServer {
-	s := &gcronServer{}
-	return s
+	return &gcronServer{}
 }
 
 // Run grpc server
 func Run(host string, port string) {
-	// flag.Parse()
 	lis, err := net.Listen("tcp", host+":"+port)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatalf("Failed to listen on %s: %v", host+":"+port, err)
 	}
 	var opts []grpc.ServerOption
 	// if *tls {
@@ -106,6 +118,6 @@ func Run(host string, port string) {
 	// }
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterGcronServer(grpcServer, newServer())
-	log.Printf("Started listening on : %v", host+":"+port)
+	log.Infof("Started listening on: %s", host+":"+port)
 	grpcServer.Serve(lis)
 }

@@ -1,39 +1,36 @@
 # gcron server [In Development]
 A go written tool to manage distributed cron jobs with centralized GUI. This will help you monitor gcrons if you have multiple servers.
 
-[gcron client](https://github.com/mbrostami/gcron)
 
-## Features
-- Supporting GCron 
-- Centralized logging
-- GUI interface
-  - Search outputs by tags/server/text
-  - Check crons status (exit code, running time, last run, ...)
-  - Graphs 
-  - Realtime monitoring
-  - Resource usage per cron/server
-- Accept syslog formats as input
-- Auto detect input tags (specific syntax)
-- Pipe input logs to remote syslog
-- Pipe input logs to remote REST Api 
+## Requirements 
+ - [gcron client](https://github.com/mbrostami/gcron)
 
-## Dev
-TCP Server `go run main.go`  
-TCP Server `go run main.go --host=0.0.0.0`  
-TCP Server `go run main.go --host=0.0.0.0 --port=1400`  
-UDP Server `go run main.go --prot=tcp`  
-UNIX Server `go run main.go --prot=unix`   
-```
-  -host string
-        Host (default "127.0.0.1")
-  -port string
-        Port number (default "1400")
-  -prot string
-        Protocol (tcp/udp/unix) (default "tcp")
-```
 
 ## TODO
-- All Features! :D
+- [ ] Clean code!
+- [ ] Write tests
+- [ ] Pick distributed high performance database to store all logs (search optimized, hash O(1) read support)
+- [ ] GUI
+  - [ ] Authentication
+  - [ ] Search logs (tag, hostname, uid, command, guid, output)
+- [ ] Log stream proxy... (remote third party log server, REST Api, tcp/udp)
+- [x] Remote mutex lock for clients
+- [ ] TLS enabled over RPC
+- [ ] Client authentication + (caching system)
+- [ ] Async write (Get stream logs and write in database async)
+- [ ] Handle timeouts
+- [ ] Customized taging clientside
+- [ ] Support different agents
+  
 
 
+## Dev
+`go run main.go`
+```
+      --log.enable           Enable log in file
+      --log.level string     Log level (default "warning")
+      --log.path string      Log file path (default "/var/log/gcron/gcron-server.log")
+      --server.host string   Server host (default "localhost")
+      --server.port string   Server port (default "1400")
+```
 

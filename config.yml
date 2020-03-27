@@ -2,11 +2,8 @@
 server:
     host: "localhost"
     port: "1400"
-    Protocol: "grpc"
-    unix:
-        socket: "/tmp/gcron-server.sock"
-
 
 log:
     level: "info"
+    enable: false
     path: "/var/log/gcron/gcron-server.log"
