@@ -9,12 +9,13 @@ A go written tool to manage distributed cron jobs with centralized GUI. This wil
 ## TODO
 - [ ] Clean code!
 - [ ] Write tests
-- [ ] Pick distributed high performance database to store all logs (search optimized, hash O(1) read support)
+- [ ] Pick distributed high performance database to store all logs (search optimised, hash O(1) read support)
 - [ ] GUI
   - [ ] Authentication
   - [ ] Search logs (tag, hostname, uid, command, guid, output)
 - [ ] Log stream proxy... (remote third party log server, REST Api, tcp/udp)
 - [x] Remote mutex lock for clients
+- [ ] Migrate mutex from file locking to use memory  
 - [ ] TLS enabled over RPC
 - [ ] Client authentication + (caching system)
 - [ ] Async write (Get stream logs and write in database async)
