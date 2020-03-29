@@ -32,6 +32,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
+	"github.com/mbrostami/gcron-server/db"
 	pb "github.com/mbrostami/gcron/grpc"
 	"github.com/mbrostami/gcron/helpers"
 	log "github.com/sirupsen/logrus"
@@ -39,7 +40,9 @@ import (
 
 type gcronServer struct {
 	pb.UnimplementedGcronServer
-	mux *helpers.Mutex
+	mux       *helpers.Mutex
+	db        db.DB
+	tmpOutput []byte
 }
 
 // Lock mutex lock by name
@@ -68,36 +71,37 @@ func (s *gcronServer) Release(ctx context.Context, lockName *wrappers.StringValu
 // Log returns the feature at the given point.
 func (s *gcronServer) StartLog(stream pb.Gcron_StartLogServer) error {
 	log.Debugf("Calling method StartLog...")
-	var pointCount int32
-	var lastLog *pb.LogEntry
+	// To speed up streaming we keep outputs in memory to store in db later
 	for {
 		logEntry, err := stream.Recv()
 		if err == io.EOF {
-			log.Tracef("Last log %v", lastLog)
+			log.Infof("Last entry... %+v", logEntry)
+			// s.tmpOutput = append(s.tmpOutput, logEntry.Output...)
 			return stream.SendAndClose(&wrappers.BoolValue{Value: true})
 		}
 		if err != nil {
 			return err
 		}
 		log.Tracef("Incoming stream %v", logEntry)
-		pointCount++
-		lastLog = logEntry
+		s.tmpOutput = append(s.tmpOutput, logEntry.Output...)
 	}
 }
 
 // Done Save the latest state of task.
 func (s *gcronServer) Done(ctx context.Context, task *pb.Task) (*wrappers.BoolValue, error) {
 	log.Debugf("Calling method Done ... %+v", task)
+	task.Output = s.tmpOutput
+	s.db.Store(task)
 	boolValue := &wrappers.BoolValue{Value: true}
 	return boolValue, nil
 }
 
-func newServer() *gcronServer {
-	return &gcronServer{}
+func newServer(dbAdapter db.DB) *gcronServer {
+	return &gcronServer{db: dbAdapter}
 }
 
 // Run grpc server
-func Run(host string, port string) {
+func Run(host string, port string, dbAdapter db.DB) {
 	lis, err := net.Listen("tcp", host+":"+port)
 	if err != nil {
 		log.Fatalf("Failed to listen on %s: %v", host+":"+port, err)
@@ -117,7 +121,7 @@ func Run(host string, port string) {
 	// 	opts = []grpc.ServerOption{grpc.Creds(creds)}
 	// }
 	grpcServer := grpc.NewServer(opts...)
-	pb.RegisterGcronServer(grpcServer, newServer())
+	pb.RegisterGcronServer(grpcServer, newServer(dbAdapter))
 	log.Infof("Started listening on: %s", host+":"+port)
 	grpcServer.Serve(lis)
 }

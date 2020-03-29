@@ -6,6 +6,7 @@ import (
 
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/mbrostami/gcron-server/configs"
+	"github.com/mbrostami/gcron-server/db"
 	"github.com/mbrostami/gcron-server/grpc"
 	log "github.com/sirupsen/logrus"
 )
@@ -27,5 +28,10 @@ func main() {
 	})
 	log.SetOutput(os.Stdout)
 
-	grpc.Run(cfg.Server.Host, cfg.Server.Port)
+	var dbAdapter db.DB
+
+	dbAdapter, _ = db.NewTiedot() // using Bleve
+
+	// dbAdapter.Search("1111", 10)
+	grpc.Run(cfg.Server.Host, cfg.Server.Port, dbAdapter)
 }

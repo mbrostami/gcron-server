@@ -3,7 +3,14 @@ module github.com/mbrostami/gcron-server
 go 1.14
 
 require (
+	github.com/HouzuoGuo/tiedot v0.0.0-20191112163212-3246d2a872c5
+	github.com/RoaringBitmap/roaring v0.4.21 // indirect
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
+	github.com/blevesearch/bleve v0.8.2
+	github.com/blevesearch/go-porterstemmer v1.0.3 // indirect
+	github.com/blevesearch/segment v0.0.0-20160915185041-762005e7a34f // indirect
+	github.com/blevesearch/snowballstem v0.0.0-20200325004757-48afb64082dd // indirect
+	github.com/couchbase/vellum v0.0.0-20190829182332-ef2e028c01fd // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/golang/protobuf v1.3.5
@@ -17,6 +24,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.6.2
+	github.com/steveyen/gtreap v0.0.0-20150807155958-0abe01ef9be2 // indirect
 	google.golang.org/genproto v0.0.0-20200326112834-f447254575fd // indirect
 	google.golang.org/grpc v1.28.0
 	gopkg.in/ini.v1 v1.55.0 // indirect
