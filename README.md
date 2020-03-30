@@ -22,6 +22,9 @@ A go written tool to manage distributed cron jobs with centralized GUI. This wil
 - [ ] Handle timeouts
 - [ ] Customized taging clientside
 - [ ] Support different agents
+
+- [ ] Use simple logging system instead of db
+- [ ] Use ElasticSearch 
   
 
 
