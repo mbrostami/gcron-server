@@ -62,7 +62,7 @@ func (l LedisDB) Get(uid uint32, start int, stop int) {
 		log.Printf("Score: %v", unixTimeUTC.Format(time.RFC3339))
 		task := &pb.Task{}
 		json.Unmarshal(member, &task)
-		log.Printf("Member: %+v", task)
+		log.Printf("Member: %+v", string(task.GetOutput()))
 	}
 	log.Fatal("Scores")
 }

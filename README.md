@@ -9,7 +9,7 @@ A go written tool to manage distributed cron jobs with centralized GUI. This wil
 ## TODO
 - [ ] Clean code!
 - [ ] Write tests
-- [ ] Pick distributed high performance database to store all logs (search optimised, hash O(1) read support)
+- [x] Pick distributed high performance database to store all logs (search optimised, hash O(1) read support)
 - [ ] GUI
   - [ ] Authentication
   - [ ] Search logs (tag, hostname, uid, command, guid, output)
@@ -23,9 +23,6 @@ A go written tool to manage distributed cron jobs with centralized GUI. This wil
 - [ ] Customized taging clientside
 - [ ] Support different agents
 
-- [ ] Use simple logging system instead of db
-- [ ] Use ElasticSearch 
-  
 
 
 ## Dev

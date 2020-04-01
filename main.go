@@ -30,9 +30,9 @@ func main() {
 
 	var dbAdapter db.DB
 
-	dbAdapter = db.NewLedis() // using Bleve
+	dbAdapter = db.NewLedis()
 
-	dbAdapter.Get(2102444265, 0, 1)
+	dbAdapter.Get(1804827571, 0, 1)
 
 	grpc.Run(cfg.Server.Host, cfg.Server.Port, dbAdapter)
 }
