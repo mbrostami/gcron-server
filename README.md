@@ -14,14 +14,15 @@ A go written tool to manage distributed cron jobs with centralized GUI. This wil
   - [ ] Authentication
   - [ ] Search logs (tag, hostname, uid, command, guid, output)
 - [ ] Log stream proxy... (remote third party log server, REST Api, tcp/udp)
-- [x] Remote mutex lock for clients
-- [ ] Migrate mutex from file locking to use memory  
 - [ ] TLS enabled over RPC
 - [ ] Client authentication + (caching system)
 - [ ] Async write (Get stream logs and write in database async)
 - [ ] Handle timeouts
 - [ ] Customized taging clientside
 - [ ] Support different agents
+- [x] Implement shared lock for clients
+- [x] Migrate mutex from file locking to use db
+- [x] Mutex client timeout
 
 
 

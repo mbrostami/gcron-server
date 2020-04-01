@@ -44,13 +44,13 @@ type gcronServer struct {
 }
 
 // Lock mutex lock by name
-func (s *gcronServer) Lock(ctx context.Context, lockName *wrappers.StringValue) (*wrappers.BoolValue, error) {
-	log.Debugf("Locking ... %+v", lockName.GetValue())
-	locked, err := s.db.Lock(lockName.GetValue())
+func (s *gcronServer) Lock(ctx context.Context, lockMessage *pb.LockMessage) (*wrappers.BoolValue, error) {
+	log.Debugf("Locking ... %+v", lockMessage.Key)
+	locked, err := s.db.Lock(lockMessage.Key, lockMessage.Timeout)
 	if locked {
-		log.Debugf("Locked! %v", lockName.GetValue())
+		log.Debugf("Locked! %v", lockMessage.Key)
 	} else {
-		log.Debugf("Already locked! %v", lockName.GetValue())
+		log.Debugf("Already locked! %v", lockMessage.Key)
 	}
 	boolValue := &wrappers.BoolValue{Value: locked}
 	return boolValue, err
@@ -98,7 +98,7 @@ func newServer(dbAdapter db.DB) *gcronServer {
 
 // Run grpc server
 func Run(host string, port string, dbAdapter db.DB) {
-	lis, err := net.Listen("tcp", host+":"+port)
+	listener, err := net.Listen("tcp", host+":"+port)
 	if err != nil {
 		log.Fatalf("Failed to listen on %s: %v", host+":"+port, err)
 	}
@@ -119,5 +119,5 @@ func Run(host string, port string, dbAdapter db.DB) {
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterGcronServer(grpcServer, newServer(dbAdapter))
 	log.Infof("Started listening on: %s", host+":"+port)
-	grpcServer.Serve(lis)
+	grpcServer.Serve(listener)
 }

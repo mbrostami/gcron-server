@@ -70,16 +70,17 @@ func (l LedisDB) Get(uid uint32, start int, stop int) *TaskCollection {
 }
 
 // Lock create a lock
-func (l LedisDB) Lock(key string) (bool, error) {
+func (l LedisDB) Lock(key string, timeout int32) (bool, error) {
 	db, erro := l.ledis.Select(1)
 	byteKey := []byte(key)
 	exists, err := db.Exists(byteKey)
 	if err != nil || exists == 0 {
 		err := db.Set(byteKey, []byte("1")) // value doesn't matter
-		// db.Expire(byteKey, 60)              // default 60 seconds expire time
 		if err != nil {
 			return false, err
 		}
+		a, errorr := db.Expire(byteKey, int64(timeout)) // expire time
+		log.Warnf("Expires in :: %+v, %v , %v", a, errorr, timeout)
 		return true, nil
 	}
 	log.Warnf("Lock: %+v, status: %+v : %+v", key, exists, erro)

@@ -16,7 +16,7 @@ require (
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/golang/protobuf v1.3.5
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
-	github.com/mbrostami/gcron v0.0.3-beta.5
+	github.com/mbrostami/gcron v0.0.3-beta.6
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/rs/xid v1.2.1

@@ -124,6 +124,8 @@ github.com/mbrostami/gcron v0.0.3-beta.4 h1:+YEtRCxtKQpalpDfOghDL9dQTINL3L5d5Z3C
 github.com/mbrostami/gcron v0.0.3-beta.4/go.mod h1:KzPj3Xqm6L38yQlBg1wi8A+p/OxJwHlX4dr8NGMIU2M=
 github.com/mbrostami/gcron v0.0.3-beta.5 h1:FJBJCuYnmGCnriGUC8dgK26h1SH6IENQbjGBL4SY0Ko=
 github.com/mbrostami/gcron v0.0.3-beta.5/go.mod h1:KzPj3Xqm6L38yQlBg1wi8A+p/OxJwHlX4dr8NGMIU2M=
+github.com/mbrostami/gcron v0.0.3-beta.6 h1:uBHMJLoYLfbJ4A4kgY9cCxCPRbW67L7WEqmVkMK6Plo=
+github.com/mbrostami/gcron v0.0.3-beta.6/go.mod h1:KzPj3Xqm6L38yQlBg1wi8A+p/OxJwHlX4dr8NGMIU2M=
 github.com/mbrostami/go-filemutex v1.1.0 h1:Ne8sqAzpULytXSjjCRy1SdENs/DqTnDx23CMvokFp0c=
 github.com/mbrostami/go-filemutex v1.1.0/go.mod h1:qm7qbhGDy+dFC6Ud62305ZDt86jyI8K04PzTUf+Vydk=
 github.com/mitchellh/go-homedir v1.1.0/go.mod h1:SfyaCUpYCn1Vlf4IUYiD9fPX4A5wJrkLzIz1N1q0pr0=
