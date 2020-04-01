@@ -30,8 +30,9 @@ func main() {
 
 	var dbAdapter db.DB
 
-	dbAdapter, _ = db.NewTiedot() // using Bleve
+	dbAdapter = db.NewLedis() // using Bleve
 
-	// dbAdapter.Search("1111", 10)
+	dbAdapter.Get(2102444265, 0, 1)
+
 	grpc.Run(cfg.Server.Host, cfg.Server.Port, dbAdapter)
 }
