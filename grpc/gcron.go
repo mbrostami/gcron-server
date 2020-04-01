@@ -118,6 +118,6 @@ func Run(host string, port string, dbAdapter db.DB) {
 	// }
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterGcronServer(grpcServer, newServer(dbAdapter))
-	log.Infof("Started listening on: %s", host+":"+port)
+	log.Infof("Started listening on: %s (server)", host+":"+port)
 	grpcServer.Serve(listener)
 }

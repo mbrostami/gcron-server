@@ -1,0 +1,17 @@
+<!-- {{/* a comment */}}	Defines a comment
+{{.}}	Renders the root element
+{{.Title}}	Renders the “Title”-field in a nested element
+{{if .Done}} {{else}} {{end}}	Defines an if-Statement
+{{range .Todos}} {{.}} {{end}}	Loops over all “Todos” and renders each using {{.}}
+{{block "content" .}} {{end}}	Defines a block with the name “content” -->
+
+<h1>{{.PageTitle}}</h1>
+<ul>
+    {{range .Todos}}
+        {{if .Done}}
+            <li class="done">{{.Title}}</li>
+        {{else}}
+            <li>{{.Title}}</li>
+        {{end}}
+    {{end}}
+</ul>

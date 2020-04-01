@@ -8,6 +8,7 @@ import (
 	"github.com/mbrostami/gcron-server/configs"
 	"github.com/mbrostami/gcron-server/db"
 	"github.com/mbrostami/gcron-server/grpc"
+	"github.com/mbrostami/gcron-server/web"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -28,11 +29,13 @@ func main() {
 	})
 	log.SetOutput(os.Stdout)
 
-	var dbAdapter db.DB
+	// Run in second thread
+	go web.Listen()
 
+	var dbAdapter db.DB
 	dbAdapter = db.NewLedis()
 
+	// Run in main thread
 	//taskCollection := dbAdapter.Get(1446109160, 0, 5)
-
 	grpc.Run(cfg.Server.Host, cfg.Server.Port, dbAdapter)
 }
