@@ -72,6 +72,7 @@ func (s *gcronServer) Release(ctx context.Context, lockName *wrappers.StringValu
 func (s *gcronServer) StartLog(stream pb.Gcron_StartLogServer) error {
 	log.Debugf("Calling method StartLog...")
 	// To speed up streaming we keep outputs in memory to store in db later
+	s.tmpOutput = nil
 	for {
 		logEntry, err := stream.Recv()
 		if err == io.EOF {
@@ -83,6 +84,7 @@ func (s *gcronServer) StartLog(stream pb.Gcron_StartLogServer) error {
 			return err
 		}
 		log.Tracef("Incoming stream %v", logEntry)
+		logEntry.Output = append(logEntry.Output, []byte("\n")...)
 		s.tmpOutput = append(s.tmpOutput, logEntry.Output...)
 	}
 }

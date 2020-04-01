@@ -52,19 +52,21 @@ func (l LedisDB) Store(task *pb.Task) (string, error) {
 }
 
 // Get members of a key
-func (l LedisDB) Get(uid uint32, start int, stop int) {
+func (l LedisDB) Get(uid uint32, start int, stop int) *TaskCollection {
 	byteKeys := (*[4]byte)(unsafe.Pointer(&uid))[:] // 32 bit id (4 byte)
 	scorePairs, _ := l.db.ZRange(byteKeys, start, stop)
+	tasks := make(map[string]*pb.Task)
 	for _, scorePair := range scorePairs {
 		score := scorePair.Score
 		member := scorePair.Member
 		unixTimeUTC := time.Unix(score, 0)
-		log.Printf("Score: %v", unixTimeUTC.Format(time.RFC3339))
+		log.Debugf("Score: %v", unixTimeUTC.Format(time.RFC3339))
 		task := &pb.Task{}
 		json.Unmarshal(member, &task)
-		log.Printf("Member: %+v", string(task.GetOutput()))
+		log.Debugf("Member: %+v", string(task.GetOutput()))
+		tasks[task.GUID] = task
 	}
-	log.Fatal("Scores")
+	return &TaskCollection{Tasks: tasks}
 }
 
 // Close members of a key

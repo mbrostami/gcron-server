@@ -32,7 +32,7 @@ func main() {
 
 	dbAdapter = db.NewLedis()
 
-	dbAdapter.Get(1804827571, 0, 1)
+	//taskCollection := dbAdapter.Get(1446109160, 0, 5)
 
 	grpc.Run(cfg.Server.Host, cfg.Server.Port, dbAdapter)
 }
