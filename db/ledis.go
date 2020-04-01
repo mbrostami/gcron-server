@@ -26,7 +26,7 @@ func NewLedis() *LedisDB {
 		log.Fatalf("DB Connect error! %v", err)
 	}
 	db, _ := ledis.Select(0)
-	return &LedisDB{db: db}
+	return &LedisDB{db: db, ledis: ledis}
 }
 
 // Store data in db
@@ -67,6 +67,33 @@ func (l LedisDB) Get(uid uint32, start int, stop int) *TaskCollection {
 		tasks[task.GUID] = task
 	}
 	return &TaskCollection{Tasks: tasks}
+}
+
+// Lock create a lock
+func (l LedisDB) Lock(key string) (bool, error) {
+	db, erro := l.ledis.Select(1)
+	byteKey := []byte(key)
+	exists, err := db.Exists(byteKey)
+	if err != nil || exists == 0 {
+		err := db.Set(byteKey, []byte("1")) // value doesn't matter
+		// db.Expire(byteKey, 60)              // default 60 seconds expire time
+		if err != nil {
+			return false, err
+		}
+		return true, nil
+	}
+	log.Warnf("Lock: %+v, status: %+v : %+v", key, exists, erro)
+	return (exists == 0), nil
+}
+
+// Release release lock
+func (l LedisDB) Release(key string) (bool, error) {
+	db, _ := l.ledis.Select(1)
+	byteKey := []byte(key)
+	if _, err := db.Del(byteKey); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // Close members of a key

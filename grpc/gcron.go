@@ -34,13 +34,11 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/mbrostami/gcron-server/db"
 	pb "github.com/mbrostami/gcron/grpc"
-	"github.com/mbrostami/gcron/helpers"
 	log "github.com/sirupsen/logrus"
 )
 
 type gcronServer struct {
 	pb.UnimplementedGcronServer
-	mux       *helpers.Mutex
 	db        db.DB
 	tmpOutput []byte
 }
@@ -48,9 +46,7 @@ type gcronServer struct {
 // Lock mutex lock by name
 func (s *gcronServer) Lock(ctx context.Context, lockName *wrappers.StringValue) (*wrappers.BoolValue, error) {
 	log.Debugf("Locking ... %+v", lockName.GetValue())
-	mux, _ := helpers.NewMutex(lockName.GetValue())
-	s.mux = mux
-	locked, err := s.mux.Lock()
+	locked, err := s.db.Lock(lockName.GetValue())
 	if locked {
 		log.Debugf("Locked! %v", lockName.GetValue())
 	} else {
@@ -63,7 +59,7 @@ func (s *gcronServer) Lock(ctx context.Context, lockName *wrappers.StringValue) 
 // Release release the lock
 func (s *gcronServer) Release(ctx context.Context, lockName *wrappers.StringValue) (*wrappers.BoolValue, error) {
 	log.Debugf("Releasing ... %+v", lockName.GetValue())
-	released, err := s.mux.Release()
+	released, err := s.db.Release(lockName.GetValue())
 	boolValue := &wrappers.BoolValue{Value: released}
 	return boolValue, err
 }
@@ -76,8 +72,6 @@ func (s *gcronServer) StartLog(stream pb.Gcron_StartLogServer) error {
 	for {
 		logEntry, err := stream.Recv()
 		if err == io.EOF {
-			log.Infof("Last entry... %+v", logEntry)
-			// s.tmpOutput = append(s.tmpOutput, logEntry.Output...)
 			return stream.SendAndClose(&wrappers.BoolValue{Value: true})
 		}
 		if err != nil {

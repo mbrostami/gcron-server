@@ -12,4 +12,7 @@ type DB interface {
 	Store(task *pb.Task) (string, error)
 	Get(uid uint32, start int, stop int) *TaskCollection
 	Close()
+
+	Lock(key string) (bool, error)
+	Release(key string) (bool, error)
 }
