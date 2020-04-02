@@ -2,21 +2,17 @@ package pages
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/mbrostami/gcron-server/db"
 )
 
 // LoginPage using Page interface
 type LoginPage struct {
-	Template string
+	db db.DB
 }
 
 // NewLoginPage creates new page
-func NewLoginPage() *LoginPage {
-	return &LoginPage{}
-}
-
-// GetPath returns template path
-func (p *LoginPage) GetPath() string {
-	return "web/static/login.html"
+func NewLoginPage(db db.DB) *LoginPage {
+	return &LoginPage{db: db}
 }
 
 // GetRoute url endpoint
@@ -35,6 +31,6 @@ func (p *LoginPage) Handler(method string, c *gin.Context) Response {
 	res = gin.H{
 		"message": "login pong",
 	}
-	c.JSON(200, res)
+	c.HTML(200, "login.tmpl", res)
 	return res
 }

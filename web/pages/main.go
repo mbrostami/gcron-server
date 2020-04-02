@@ -2,21 +2,17 @@ package pages
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/mbrostami/gcron-server/db"
 )
 
 // MainPage using Page interface
 type MainPage struct {
-	Template string
+	db db.DB
 }
 
 // NewMainPage creates new page
-func NewMainPage() *MainPage {
-	return &MainPage{}
-}
-
-// GetPath returns template path
-func (p *MainPage) GetPath() string {
-	return "web/static/main.html"
+func NewMainPage(db db.DB) *MainPage {
+	return &MainPage{db: db}
 }
 
 // GetRoute url endpoint
@@ -32,9 +28,15 @@ func (p *MainPage) GetMethods() []string {
 // Handler get page parameters
 func (p *MainPage) Handler(method string, c *gin.Context) Response {
 	var res Response
+	taskCollection := p.db.Get(1446109160, 0, 5)
+	// for guid, task := range taskCollection.Tasks {
+	// 	log.Infof("collection guid %v, %+v", guid, task)
+	// }
 	res = gin.H{
+		"tasks":   taskCollection.Tasks,
 		"message": "main pong",
 	}
-	c.JSON(200, res)
+	c.HTML(200, "main.tmpl", res)
+	//c.JSON(200, res)
 	return res
 }

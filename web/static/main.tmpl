@@ -1,0 +1,17 @@
+
+{{if .message}} 
+    <h1>{{.message}}</h1>
+{{else}}
+    <h1>No Message</h1>
+{{end}}
+
+{{range $guid, $element := .tasks}}
+
+<b>{{$guid}}: {{$element.Command}}</b><br/>
+<ul>
+    <li>Output: {{$element.Output | printf "%s" }}</li>
+</ul>
+
+
+<br/><br/>
+{{end}}

@@ -29,11 +29,11 @@ func main() {
 	})
 	log.SetOutput(os.Stdout)
 
-	// Run in second thread
-	go web.Listen()
-
 	var dbAdapter db.DB
 	dbAdapter = db.NewLedis()
+
+	// Run in second thread
+	go web.Listen(dbAdapter)
 
 	// Run in main thread
 	//taskCollection := dbAdapter.Get(1446109160, 0, 5)
