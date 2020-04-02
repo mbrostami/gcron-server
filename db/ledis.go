@@ -30,9 +30,8 @@ func NewLedis() *LedisDB {
 }
 
 // Store data in db
-func (l LedisDB) Store(task *pb.Task) (string, error) {
-	key := task.GetUID()
-	byteKeys := (*[4]byte)(unsafe.Pointer(&key))[:] // 32 bit id (4 byte)
+func (l LedisDB) Store(uid uint32, task *pb.Task) (string, error) {
+	byteKeys := (*[4]byte)(unsafe.Pointer(&uid))[:] // 32 bit id (4 byte)
 
 	guid, _ := xid.FromString(task.GetGUID())
 
@@ -68,6 +67,12 @@ func (l LedisDB) Get(uid uint32, start int, stop int) *TaskCollection {
 	}
 	return &TaskCollection{Tasks: tasks}
 }
+
+// AddTask add new task to the list of the tasks
+// func (l LedisDB) AddTask(task *pb.Task) (bool, error) {
+// 	key := []byte("TaskList")
+// 	l.db.ZAdd(key)
+// }
 
 // Lock create a lock
 func (l LedisDB) Lock(key string, timeout int32) (bool, error) {

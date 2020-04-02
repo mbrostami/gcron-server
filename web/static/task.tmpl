@@ -1,0 +1,21 @@
+
+{{ template "header.tmpl" }}
+
+{{if .message}} 
+    <h1>{{.message}}</h1>
+{{end}}
+
+<h2>{{ .command.Command }}</h2>
+
+{{range $element := .tasks}}
+
+<b>{{$element.StartTime.Seconds | secondsToDate}}: {{$element.Success}}</b><br/>
+<ul>
+    <li>Output: {{ $element.Output | byteToString }}</li>
+    <li>Task: {{ $element }}</li>
+</ul>
+
+<br/><br/>
+{{end}}
+
+{{ template "footer.tmpl" }}

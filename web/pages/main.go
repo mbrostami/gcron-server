@@ -7,11 +7,11 @@ import (
 
 // MainPage using Page interface
 type MainPage struct {
-	db db.DB
+	db *db.DB
 }
 
 // NewMainPage creates new page
-func NewMainPage(db db.DB) *MainPage {
+func NewMainPage(db *db.DB) *MainPage {
 	return &MainPage{db: db}
 }
 
@@ -28,12 +28,7 @@ func (p *MainPage) GetMethods() []string {
 // Handler get page parameters
 func (p *MainPage) Handler(method string, c *gin.Context) Response {
 	var res Response
-	taskCollection := p.db.Get(1446109160, 0, 5)
-	// for guid, task := range taskCollection.Tasks {
-	// 	log.Infof("collection guid %v, %+v", guid, task)
-	// }
 	res = gin.H{
-		"tasks":   taskCollection.Tasks,
 		"message": "main pong",
 	}
 	c.HTML(200, "main.tmpl", res)

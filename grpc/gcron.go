@@ -87,7 +87,7 @@ func (s *gcronServer) StartLog(stream pb.Gcron_StartLogServer) error {
 func (s *gcronServer) Done(ctx context.Context, task *pb.Task) (*wrappers.BoolValue, error) {
 	log.Debugf("Calling method Done ... %+v", task)
 	task.Output = s.tmpOutput
-	s.db.Store(task)
+	s.db.Store(task.UID, task)
 	boolValue := &wrappers.BoolValue{Value: true}
 	return boolValue, nil
 }
