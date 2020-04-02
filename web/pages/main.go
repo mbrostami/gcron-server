@@ -24,16 +24,17 @@ func (p *MainPage) GetRoute() string {
 	return "/"
 }
 
-// GetMethod method available for this page
-func (p *MainPage) GetMethod() string {
-	return "GET"
+// GetMethods method available for this page
+func (p *MainPage) GetMethods() []string {
+	return []string{"GET"}
 }
 
-// GetResponse get page parameters
-func (p *MainPage) GetResponse() Response {
+// Handler get page parameters
+func (p *MainPage) Handler(method string, c *gin.Context) Response {
 	var res Response
 	res = gin.H{
 		"message": "main pong",
 	}
+	c.JSON(200, res)
 	return res
 }

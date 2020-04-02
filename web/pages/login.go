@@ -24,16 +24,17 @@ func (p *LoginPage) GetRoute() string {
 	return "/login"
 }
 
-// GetMethod method available for this page
-func (p *LoginPage) GetMethod() string {
-	return "GET"
+// GetMethods method available for this page
+func (p *LoginPage) GetMethods() []string {
+	return []string{"GET", "POST"}
 }
 
-// GetResponse get page parameters
-func (p *LoginPage) GetResponse() Response {
+// Handler get page parameters
+func (p *LoginPage) Handler(method string, c *gin.Context) Response {
 	var res Response
 	res = gin.H{
 		"message": "login pong",
 	}
+	c.JSON(200, res)
 	return res
 }

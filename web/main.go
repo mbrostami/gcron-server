@@ -20,7 +20,15 @@ func Listen() {
 }
 
 func addPage(r *gin.Engine, page pages.Page) {
-	r.GET(page.GetRoute(), func(c *gin.Context) {
-		c.JSON(200, page.GetResponse())
-	})
+	for _, method := range page.GetMethods() {
+		if method == "GET" {
+			r.GET(page.GetRoute(), func(c *gin.Context) {
+				page.Handler("GET", c)
+			})
+		} else if method == "POST" {
+			r.POST(page.GetRoute(), func(c *gin.Context) {
+				page.Handler("POST", c)
+			})
+		}
+	}
 }
