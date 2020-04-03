@@ -19,7 +19,7 @@ func Listen(db db.DB) {
 	t, _ := loadTemplate()
 	r.SetHTMLTemplate(t)
 
-	addPage(r, pages.NewMainPage())
+	addPage(r, pages.NewMainPage(db))
 	addPage(r, pages.NewLoginPage(db))
 	addPage(r, pages.NewTaskPage(db))
 

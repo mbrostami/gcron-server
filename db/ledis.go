@@ -68,11 +68,36 @@ func (l LedisDB) Get(uid uint32, start int, stop int) *TaskCollection {
 	return &TaskCollection{Tasks: tasks}
 }
 
-// AddTask add new task to the list of the tasks
-// func (l LedisDB) AddTask(task *pb.Task) (bool, error) {
-// 	key := []byte("TaskList")
-// 	l.db.ZAdd(key)
-// }
+// SetTask add new task to the list of the tasks
+func (l LedisDB) SetTask(task *pb.Task) (bool, error) {
+	key := []byte("TaskList")
+	jsonByte, jerr := json.Marshal(&task)
+	if jerr != nil {
+		log.Fatal("encode error:", jerr)
+	}
+	l.db.LClear(key)
+	added, err := l.db.HSet(key, ledis.PutInt64(int64(task.UID)), jsonByte)
+	if err != nil {
+		log.Fatalf("DB LSet error! %v", err)
+	}
+	return (added == 1), nil
+}
+
+// GetTasks returns the list of the tasks
+func (l LedisDB) GetTasks(from int32, limit int32) *TaskCollection {
+	key := []byte("TaskList")
+	list, err := l.db.HScan(key, ledis.PutInt64(int64(from)), int(limit), true, "*")
+	if err != nil {
+		log.Fatalf("DB LRange error! %v", err)
+	}
+	tasks := make(map[string]*pb.Task)
+	for _, fiealdValue := range list {
+		task := &pb.Task{}
+		json.Unmarshal(fiealdValue.Value, &task)
+		tasks[string(fiealdValue.Field)] = task
+	}
+	return &TaskCollection{Tasks: tasks}
+}
 
 // Lock create a lock
 func (l LedisDB) Lock(key string, timeout int32) (bool, error) {

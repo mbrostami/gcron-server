@@ -7,4 +7,17 @@
     <h1>No Message</h1>
 {{end}}
 
+
+<ul>
+{{range $element := .commands}}
+    <li>
+        <b>{{$element.Command}} : {{$element.StartTime.Seconds | secondsToDate}}: {{$element.Success}}</b><br/>
+        <ul>
+            <li>Output: {{ $element.Output | byteToString }}</li>
+            <li>Task: {{ $element }}</li>
+        </ul>
+    </li>
+{{end}}
+</ul>
+
 {{ template "footer.tmpl" }}

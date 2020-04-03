@@ -13,8 +13,8 @@ type DB interface {
 	Get(uid uint32, start int, stop int) *TaskCollection
 	Close()
 
-	// AddTask(task *pb.Task) (bool, error)
-	// GetTasks(task *pb.Task) *TaskCollection
+	SetTask(task *pb.Task) (bool, error)
+	GetTasks(from int32, limit int32) *TaskCollection
 
 	Lock(key string, timeout int32) (bool, error)
 	Release(key string) (bool, error)

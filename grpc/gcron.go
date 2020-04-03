@@ -88,6 +88,7 @@ func (s *gcronServer) Done(ctx context.Context, task *pb.Task) (*wrappers.BoolVa
 	log.Debugf("Calling method Done ... %+v", task)
 	task.Output = s.tmpOutput
 	s.db.Store(task.UID, task)
+	s.db.SetTask(task)
 	boolValue := &wrappers.BoolValue{Value: true}
 	return boolValue, nil
 }
