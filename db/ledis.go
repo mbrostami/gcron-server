@@ -39,12 +39,18 @@ func (l LedisDB) Store(uid uint32, task *pb.Task) (string, error) {
 	if err != nil {
 		log.Fatal("encode error:", err)
 	}
+	member := []byte(task.GetGUID())
 	score1 := ledis.ScorePair{
 		Score:  guid.Time().Unix(),
-		Member: jsonByte,
+		Member: member, // can not store whole task, cause ledisdb has limit size (65K) in z/s/h
 	}
 	number, err := l.db.ZAdd(byteKeys, score1)
 	if err != nil {
+		log.Fatalf("DB Store error! %v", err)
+	}
+	err = l.db.Set(member, jsonByte) // has 1GB size limit
+	if err != nil {
+		l.db.ZRem(byteKeys, member) // rollback
 		log.Fatalf("DB Store error! %v", err)
 	}
 	return string(number), nil
@@ -58,10 +64,11 @@ func (l LedisDB) Get(uid uint32, start int, stop int) *TaskCollection {
 	for _, scorePair := range scorePairs {
 		score := scorePair.Score
 		member := scorePair.Member
+		value, _ := l.db.Get(member) // Get
 		unixTimeUTC := time.Unix(score, 0)
 		log.Debugf("Score: %v", unixTimeUTC.Format(time.RFC3339))
 		task := &pb.Task{}
-		json.Unmarshal(member, &task)
+		json.Unmarshal(value, &task)
 		log.Debugf("Member: %+v", string(task.GetOutput()))
 		tasks[task.GUID] = task
 	}

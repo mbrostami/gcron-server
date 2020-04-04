@@ -3,15 +3,18 @@
 
 <h1>Task List</h1>
 {{if .message}} 
-    <h1>{{.message}}</h1>
+    <h3>{{.message}}</h3>
 {{end}}
 <ul class="uk-list uk-list-divider uk-dark uk-padding" uk-accordion>
 {{range $element := .commands}}
     <li>
         <div class="uk-accordion-title">
+            {{if $element.Success}}
+                <span class="uk-label uk-label-success">{{$element.StartTime.Seconds | secondsToDate}}</span>
+            {{else}}
+                <span class="uk-label uk-label-danger">{{$element.StartTime.Seconds | secondsToDate}}</span>
+            {{end}}
             <a href="#" class="command">{{$element.Command}}</a>
-            <span class="date uk-text-small uk-text-warning">{{$element.StartTime.Seconds | secondsToDate}}</span> 
-            <span class="uk-label uk-label-success">{{$element.Success}}</span>
         </div>
         <div class="uk-accordion-content">
             <div class="uk-light uk-background-secondary uk-padding">
@@ -19,7 +22,7 @@
                 # {{$element.Command}} <br>
                 {{ $element.Output | byteToString }}
                 </p>
-                <a href="/tasks/{{$element.UID}}" class="uk-align-right uk-button uk-button-default">Details</a>
+                <a href="/tasks/{{$element.UID}}" class="uk-align-right uk-text-primary">Details</a>
             </div>
         </div>
     </li>
