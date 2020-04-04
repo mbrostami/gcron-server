@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/mbrostami/gcron-server/db"
 	"github.com/mbrostami/gcron-server/web/pages"
@@ -22,6 +23,7 @@ func Listen(db db.DB) {
 	addPage(r, pages.NewMainPage(db))
 	addPage(r, pages.NewLoginPage(db))
 	addPage(r, pages.NewTaskPage(db))
+	r.Use(static.Serve("/", static.LocalFile("web/static/public", false)))
 
 	r.Run("localhost:1401")
 	log.Infof("Started listening on: %d (http)", 1401)

@@ -28,10 +28,10 @@ func (p *MainPage) GetMethods() []string {
 // Handler get page parameters
 func (p *MainPage) Handler(method string, c *gin.Context) Response {
 	var res Response
-	taskCollection := p.db.GetTasks(0, 2)
+	taskCollection := p.db.GetTasks(0, 10)
 	res = gin.H{
 		"commands": taskCollection.Tasks,
-		"message":  "main pong",
+		// "message":  "main pong",
 	}
 	c.HTML(200, "main.tmpl", res)
 	//c.JSON(200, res)

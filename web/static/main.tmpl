@@ -1,21 +1,27 @@
 
 {{ template "header.tmpl" }}
 
+<h1>Task List</h1>
 {{if .message}} 
     <h1>{{.message}}</h1>
-{{else}}
-    <h1>No Message</h1>
 {{end}}
-
-
-<ul>
+<ul class="uk-list uk-list-divider uk-dark uk-padding" uk-accordion>
 {{range $element := .commands}}
     <li>
-        <b>{{$element.Command}} : {{$element.StartTime.Seconds | secondsToDate}}: {{$element.Success}}</b><br/>
-        <ul>
-            <li>Output: {{ $element.Output | byteToString }}</li>
-            <li>Task: {{ $element }}</li>
-        </ul>
+        <div class="uk-accordion-title">
+            <a href="#" class="command">{{$element.Command}}</a>
+            <span class="date uk-text-small uk-text-warning">{{$element.StartTime.Seconds | secondsToDate}}</span> 
+            <span class="uk-label uk-label-success">{{$element.Success}}</span>
+        </div>
+        <div class="uk-accordion-content">
+            <div class="uk-light uk-background-secondary uk-padding">
+                <p>
+                # {{$element.Command}} <br>
+                {{ $element.Output | byteToString }}
+                </p>
+                <a href="/tasks/{{$element.UID}}" class="uk-align-right uk-button uk-button-default">Details</a>
+            </div>
+        </div>
     </li>
 {{end}}
 </ul>

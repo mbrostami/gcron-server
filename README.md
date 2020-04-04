@@ -10,8 +10,9 @@ A go written tool to manage distributed cron jobs with centralized GUI. This wil
 - [ ] Clean code!
 - [ ] Write tests
 - [x] Pick distributed high performance database to store all logs (search optimised, hash O(1) read support)
-- [ ] GUI
+- [x] GUI
   - [ ] Authentication
+  - [ ] Use FE framework
   - [ ] Search logs (tag, hostname, uid, command, guid, output)
 - [ ] Log stream proxy... (remote third party log server, REST Api, tcp/udp)
 - [ ] TLS enabled over RPC
@@ -23,6 +24,7 @@ A go written tool to manage distributed cron jobs with centralized GUI. This wil
 - [x] Implement shared lock for clients
 - [x] Migrate mutex from file locking to use db
 - [x] Mutex client timeout
+- [ ] Fix casts int32 to int or int64 to int32
 
 
 
@@ -34,5 +36,11 @@ A go written tool to manage distributed cron jobs with centralized GUI. This wil
       --log.path string      Log file path (default "/var/log/gcron/gcron-server.log")
       --server.host string   Server host (default "localhost")
       --server.port string   Server port (default "1400")
-```
+```  
 
+FrontEnd:   
+```
+cd web/pages/static/public
+npm install
+./node_modules/webpack/bin/webpack.js
+```
