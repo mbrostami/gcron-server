@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/mbrostami/gcron-server/db"
 	"github.com/mbrostami/gcron-server/web/pages"
 	pb "github.com/mbrostami/gcron/grpc"
@@ -55,6 +56,11 @@ func loadTemplate() (*template.Template, error) {
 		"secondsToDate": func(value int64) template.HTML {
 			unixTimeUTC := time.Unix(value, 0)
 			return template.HTML(unixTimeUTC.Format("15:04:05"))
+		},
+	}).Funcs(template.FuncMap{
+		"timestampToDate": func(value *timestamp.Timestamp) template.HTML {
+			tme := time.Unix(value.Seconds, 0)
+			return template.HTML(tme.Format("Aug 2 15:04:05"))
 		},
 	}).Funcs(template.FuncMap{
 		"nanoToMili": func(value int32) template.HTML {

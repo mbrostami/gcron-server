@@ -2,6 +2,7 @@ package db
 
 import (
 	"encoding/json"
+	"sort"
 	"time"
 	"unsafe"
 
@@ -60,8 +61,8 @@ func (l LedisDB) Store(uid uint32, task *pb.Task) (string, error) {
 func (l LedisDB) Get(uid uint32, start int, stop int) *TaskCollection {
 	byteKeys := (*[4]byte)(unsafe.Pointer(&uid))[:] // 32 bit id (4 byte)
 	scorePairs, _ := l.db.ZRange(byteKeys, start, stop)
-	tasks := make(map[string]*pb.Task)
-	for _, scorePair := range scorePairs {
+	tasks := make(map[int]*pb.Task)
+	for index, scorePair := range scorePairs {
 		score := scorePair.Score
 		member := scorePair.Member
 		value, _ := l.db.Get(member) // Get
@@ -70,7 +71,7 @@ func (l LedisDB) Get(uid uint32, start int, stop int) *TaskCollection {
 		task := &pb.Task{}
 		json.Unmarshal(value, &task)
 		log.Debugf("Member: %+v", string(task.GetOutput()))
-		tasks[task.GUID] = task
+		tasks[index] = task
 	}
 	return &TaskCollection{Tasks: tasks}
 }
@@ -97,11 +98,21 @@ func (l LedisDB) GetTasks(from int32, limit int32) *TaskCollection {
 	if err != nil {
 		log.Fatalf("DB HScan error! %v", err)
 	}
-	tasks := make(map[string]*pb.Task)
-	for _, fiealdValue := range list {
+	tasksUnsorted := make(map[string]ledis.FVPair)
+	var keys []string
+	for _, fieldValue := range list {
 		task := &pb.Task{}
-		json.Unmarshal(fiealdValue.Value, &task)
-		tasks[string(fiealdValue.Field)] = task
+		json.Unmarshal(fieldValue.Value, &task)
+		keys = append(keys, task.GUID)
+		tasksUnsorted[task.GUID] = fieldValue
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
+	tasks := make(map[int]*pb.Task)
+	for index, guid := range keys {
+		task := &pb.Task{}
+		fvPair := tasksUnsorted[guid]
+		json.Unmarshal(fvPair.Value, &task)
+		tasks[index] = task
 	}
 	return &TaskCollection{Tasks: tasks}
 }

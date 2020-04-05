@@ -4,7 +4,7 @@ import pb "github.com/mbrostami/gcron/grpc"
 
 // TaskCollection list of tasks
 type TaskCollection struct {
-	Tasks map[string]*pb.Task
+	Tasks map[int]*pb.Task
 }
 
 // DB database interface
