@@ -18,7 +18,7 @@ A go written tool to manage distributed cron jobs with centralized GUI. This wil
 - [x] Pick distributed high performance database to store all logs (search optimised, hash O(1) read support)
 - [x] GUI
   - [ ] Authentication
-  - [ ] Use FE framework
+  - [x] Use FE framework (uikit, npm, webpack)
   - [ ] Search logs (tag, hostname, uid, command, guid, output)
 - [ ] Log stream proxy... (remote third party log server, REST Api, tcp/udp)
 - [ ] TLS enabled over RPC
