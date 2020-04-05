@@ -1,6 +1,12 @@
 # gcron server [In Development]
 A go written tool to manage distributed cron jobs with centralized GUI. This will help you monitor gcrons if you have multiple servers.
 
+## ScreenShots
+`localhost:1401`  
+#### Main Page
+![Main Page](./.github/MainPage.png)
+#### Task Details
+![Task Page](./.github/CommandPage.png)
 
 ## Requirements 
  - [gcron client](https://github.com/mbrostami/gcron)
@@ -25,7 +31,6 @@ A go written tool to manage distributed cron jobs with centralized GUI. This wil
 - [x] Migrate mutex from file locking to use db
 - [x] Mutex client timeout
 - [ ] Fix casts int32 to int or int64 to int32
-
 
 
 ## Dev
