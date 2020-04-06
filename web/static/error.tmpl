@@ -1,7 +1,17 @@
-{{ template "header.tmpl" }}
+{{ template "header.tmpl" . }}
 
-<h1>error</h1>
+<h1>Error</h1>
 
-<h2>{{ .message }}</h2>
+{{if .message}} 
+    <div class="uk-alert-primary" uk-alert>
+        <a class="uk-alert-close" uk-close></a>
+        <p>{{.message}}</p>
+    </div>
+{{ else if .error}} 
+    <div class="uk-alert-danger" uk-alert>
+        <a class="uk-alert-close" uk-close></a>
+        <p>{{.error}}</p>
+    </div>
+{{end}}
 
 {{ template "footer.tmpl" }}

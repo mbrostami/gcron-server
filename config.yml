@@ -4,6 +4,10 @@ server:
     port: "1400"
 
 log:
-    level: "info"
     enable: false
+    level: "info"
     path: "/var/log/gcron/gcron-server.log"
+
+auth:
+    username: "admin"
+    password: "admin"

@@ -1,5 +1,5 @@
 
-{{ template "header.tmpl" }}
+{{ template "header.tmpl" . }}
 
 <h1>{{ .command.Command }}<span class="uk-text-small uk-align-right">#{{ .command.UID }}</span></h1>
 {{if .message}} 

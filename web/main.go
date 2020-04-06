@@ -9,8 +9,10 @@ import (
 	"time"
 
 	"github.com/gin-contrib/static"
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/ptypes/timestamp"
+	"github.com/mbrostami/gcron-server/configs"
 	"github.com/mbrostami/gcron-server/db"
 	"github.com/mbrostami/gcron-server/web/pages"
 	pb "github.com/mbrostami/gcron/grpc"
@@ -18,21 +20,41 @@ import (
 )
 
 // Listen start web server
-func Listen(db db.DB) {
+func Listen(db db.DB, cfg configs.Config) {
+	// gin.DefaultWriter = log.StandardLogger().Writer()
 	r := gin.Default()
 	t, _ := loadTemplate()
 	r.SetHTMLTemplate(t)
 
-	addPage(r, pages.NewMainPage(db))
-	addPage(r, pages.NewLoginPage(db))
-	addPage(r, pages.NewTaskPage(db))
+	r.Use(sessions.Sessions("mysession", sessions.NewCookieStore([]byte("secret"))))
+
+	r.Use(authRequired)
+	addPublicPage(r, pages.NewLoginPage(cfg.Auth.Username, cfg.Auth.Password))
 	r.Use(static.Serve("/", static.LocalFile("web/static/public", false)))
+	authorized := r.Group("/")
+	authorized.Use(authRequired)
+	{
+		addRouterPage(authorized, pages.NewMainPage(db))
+		addRouterPage(authorized, pages.NewTaskPage(db))
+		addRouterPage(authorized, pages.NewLogoutPage())
+	}
 
 	r.Run("localhost:1401")
 	log.Infof("Started listening on: %d (http)", 1401)
 }
 
-func addPage(r *gin.Engine, page pages.Page) {
+func authRequired(c *gin.Context) {
+	session := sessions.Default(c)
+	user := session.Get("user")
+	c.Set("user", user)
+	c.Next()
+}
+
+func addPublicPage(r *gin.Engine, page pages.Page) {
+	addRouterPage(&r.RouterGroup, page)
+}
+
+func addRouterPage(r *gin.RouterGroup, page pages.Page) {
 	for _, method := range page.GetMethods() {
 		if method == "GET" {
 			r.GET(page.GetRoute(), func(c *gin.Context) {

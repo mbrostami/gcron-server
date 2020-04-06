@@ -1,6 +1,8 @@
 package pages
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/mbrostami/gcron-server/db"
 )
@@ -27,11 +29,19 @@ func (p *MainPage) GetMethods() []string {
 
 // Handler get page parameters
 func (p *MainPage) Handler(method string, c *gin.Context) Response {
+	user, _ := c.Get("user")
 	var res Response
+	if user == nil {
+		res = gin.H{
+			"message": "You need to login first!",
+		}
+		c.Redirect(http.StatusFound, "/login")
+		return res
+	}
 	taskCollection := p.db.GetTasks(0, 100)
 	res = gin.H{
 		"commands": taskCollection.Tasks,
-		// "message":  "main pong",
+		"user":     user,
 	}
 	c.HTML(200, "main.tmpl", res)
 	//c.JSON(200, res)

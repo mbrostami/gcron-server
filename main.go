@@ -17,12 +17,12 @@ func main() {
 	// Override config file values
 	flag.Bool("log.enable", false, "Enable file log")
 	flag.String("log.path", "/var/log/gcron/gcron-server.log", "Log file path")
-	flag.String("log.level", "warning", "Log level")
-	flag.String("server.host", "localhost", "Server host")
-	flag.String("server.port", "1400", "Server port")
+	flag.String("log.level", "", "Log level")
+	flag.String("server.host", "", "Server host")
+	flag.String("server.port", "", "Server port")
 	cfg := configs.GetConfig(flag.CommandLine)
-
 	log.SetLevel(cfg.GetLogLevel())
+
 	// Setup log
 	log.SetFormatter(&nested.Formatter{
 		NoColors: false,
@@ -33,7 +33,7 @@ func main() {
 	dbAdapter = db.NewLedis()
 
 	// Run in second thread
-	go web.Listen(dbAdapter)
+	go web.Listen(dbAdapter, cfg)
 
 	// Run in main thread
 	//taskCollection := dbAdapter.Get(1446109160, 0, 5)

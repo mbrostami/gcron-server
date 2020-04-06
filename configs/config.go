@@ -11,6 +11,10 @@ import (
 
 // Config keep all config file values
 type Config struct {
+	Auth struct {
+		Username string
+		Password string
+	}
 	Log struct {
 		Enable bool
 		Level  string

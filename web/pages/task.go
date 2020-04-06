@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -30,7 +31,15 @@ func (p *TaskPage) GetMethods() []string {
 
 // Handler get page parameters
 func (p *TaskPage) Handler(method string, c *gin.Context) Response {
+	user, _ := c.Get("user")
 	var res Response
+	if user == nil {
+		res = gin.H{
+			"message": "You need to login first!",
+		}
+		c.Redirect(http.StatusFound, "/login")
+		return res
+	}
 	limit, _ := strconv.ParseInt(c.DefaultQuery("limit", "10"), 10, 32)
 	from, _ := strconv.ParseInt(c.DefaultQuery("from", "0"), 10, 32)
 
@@ -50,10 +59,10 @@ func (p *TaskPage) Handler(method string, c *gin.Context) Response {
 		break
 	}
 	res = gin.H{
+		"user":    user,
 		"command": command,
 		"tasks":   taskCollection.Tasks,
 	}
 	c.HTML(200, "task.tmpl", res)
-	//c.JSON(200, res)
 	return res
 }
